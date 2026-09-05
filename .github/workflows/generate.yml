@@ -14,8 +14,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Generate 600 Markdown articles
-        run: python tools/generate_articles.py
+      - name: Remove old generated articles
+        run: |
+          find . -maxdepth 1 -type f -name '*.md' ! -name 'README.md' -delete
+      - name: Generate 600 Markdown articles with keywords
+        run: python tools/generate_articles.py --replace-placeholder
       - name: Commit generated articles
         run: |
           git config user.name "github-actions[bot]"
@@ -25,6 +28,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No article changes"
           else
-            git commit -m "生成600篇微信账号主题文章"
+            git commit -m "按192个关键词生成600篇文章"
             git push
           fi
